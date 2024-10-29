@@ -1,0 +1,148 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Apsis API",
+    "version": "1.0.0",
+    "description": "API for managing team step counters in a leaderboard application."
+  },
+  "paths": {
+    "/api/teams": {
+      "post": {
+        "summary": "Create a new team",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" }
+                },
+                "required": ["name"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Team created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Team"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "List all teams",
+        "responses": {
+          "200": {
+            "description": "List of teams",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Team" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/teams/{teamId}": {
+      "delete": {
+        "summary": "Delete a team",
+        "parameters": [
+          { "name": "teamId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "204": { "description": "Team deleted successfully" }
+        }
+      }
+    },
+    "/api/teams/{teamId}/counters/{counterId}": {
+      "post": {
+        "summary": "Create a new counter within a team",
+        "parameters": [
+          { "name": "teamId", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "counterId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "201": {
+            "description": "Counter created successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Counter" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a counter",
+        "parameters": [
+          { "name": "teamId", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "counterId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "204": { "description": "Counter deleted successfully" }
+        }
+      }
+    },
+    "/api/teams/{teamId}/counters/{counterId}/increment": {
+      "post": {
+        "summary": "Increment counter steps",
+        "parameters": [
+          { "name": "teamId", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "counterId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": { "steps": { "type": "integer" } },
+                "required": ["steps"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Counter incremented successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Team" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Team": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "counters": { "type": "array", "items": { "$ref": "#/components/schemas/Counter" } },
+          "totalSteps": { "type": "integer" }
+        }
+      },
+      "Counter": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "steps": { "type": "integer" }
+        }
+      }
+    }
+  }
+}
